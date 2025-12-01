@@ -43,8 +43,12 @@ body { background: #000; color: #00ff88; font-family: "Source Code Pro", monospa
 const user = localStorage.getItem("user");
 if(!user){
   const bypass = prompt("Entrez votre identifiant pour accéder au terminal :");
-  if(bypass === "dimitri"){ localStorage.setItem("user","bypass-dimitri"); alert("Accès autorisé."); }
-  else { window.location.href = "./index.html"; }
+  if(bypass === "7294"){
+    localStorage.setItem("user","bypass-7294");
+    alert("Bypass activé");
+  } else {
+    window.location.href = "./index.html";
+  }
 }
 
 // ------------------------------
@@ -54,40 +58,102 @@ document.getElementById("btnProfile").addEventListener("click",()=>{window.locat
 document.getElementById("btnNewChat").addEventListener("click",()=>{window.location.href="./terminal.html";});
 
 // ------------------------------
-// Terminal IA simulation
+// Terminal IA (version réelle sans simulation)
 // ------------------------------
 const chatContainer = document.getElementById("chatContainer");
 let lastRequestTime = 0;
 const COOLDOWN = 1500;
 
 function createInputLine(){
-  const line = document.createElement("div"); line.className="terminal-line";
-  const prompt = document.createElement("span"); prompt.className="prompt"; prompt.textContent="user@eagle:~$ ";
-  const inputWrapper = document.createElement("span"); inputWrapper.className="input-wrapper";
-  const inputText = document.createElement("span"); inputText.className="input-text";
-  const cursor = document.createElement("span"); cursor.className="cursor"; cursor.textContent="_";
-  inputWrapper.appendChild(inputText); inputWrapper.appendChild(cursor);
-  line.appendChild(prompt); line.appendChild(inputWrapper);
-  chatContainer.appendChild(line); chatContainer.scrollTop=chatContainer.scrollHeight;
-  let inputValue="";
+  const line = document.createElement("div");
+  line.className="terminal-line";
+
+  const prompt = document.createElement("span");
+  prompt.className="prompt";
+  prompt.textContent="user@eagle:~$ ";
+
+  const inputWrapper = document.createElement("span");
+  inputWrapper.className="input-wrapper";
+
+  const inputText = document.createElement("span");
+  inputText.className="input-text";
+
+  const cursor = document.createElement("span");
+  cursor.className="cursor";
+  cursor.textContent="_";
+
+  inputWrapper.appendChild(inputText);
+  inputWrapper.appendChild(cursor);
+  line.appendChild(prompt);
+  line.appendChild(inputWrapper);
+  chatContainer.appendChild(line);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  let inputValue = "";
+
   document.addEventListener("keydown", function handler(e){
-    if(e.key==="Backspace"){ inputValue=inputValue.slice(0,-1); inputText.textContent=inputValue; e.preventDefault(); }
-    else if(e.key==="Enter"){ e.preventDefault(); const now=Date.now(); if(now-lastRequestTime<COOLDOWN) return; if(!inputValue) return; lastRequestTime=now; document.removeEventListener("keydown",handler); cursor.remove(); typeAIMessage(inputValue).then(()=>createInputLine()); inputValue=""; }
-    else if(e.key.length===1){ inputValue+=e.key; inputText.textContent=inputValue; chatContainer.scrollTop=chatContainer.scrollHeight; }
+    if(e.key==="Backspace"){
+      inputValue = inputValue.slice(0,-1);
+      inputText.textContent = inputValue;
+      e.preventDefault();
+    }
+    else if(e.key==="Enter"){
+      e.preventDefault();
+      const now = Date.now();
+      if(now - lastRequestTime < COOLDOWN) return;
+      if(!inputValue) return;
+
+      lastRequestTime = now;
+      document.removeEventListener("keydown", handler);
+      cursor.remove();
+
+      typeAIMessage(inputValue).then(()=>createInputLine());
+      inputValue="";
+    }
+    else if(e.key.length === 1){
+      inputValue += e.key;
+      inputText.textContent = inputValue;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
   });
 }
 
 async function typeAIMessage(userMsg){
-  const div=document.createElement("div"); div.className="msg-ai"; chatContainer.appendChild(div); chatContainer.scrollTop=chatContainer.scrollHeight;
-  const thinking=document.createElement("span"); thinking.textContent="eagle réfléchit : 0 ms"; div.appendChild(thinking);
-  let startTime=Date.now();
-  const interval=setInterval(()=>{ const elapsed=Date.now()-startTime; thinking.textContent=`eagle réfléchit : ${elapsed} ms`; chatContainer.scrollTop=chatContainer.scrollHeight; },50);
+  const div = document.createElement("div");
+  div.className = "msg-ai";
+  chatContainer.appendChild(div);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  const thinking = document.createElement("span");
+  thinking.textContent = "eagle réfléchit : 0 ms";
+  div.appendChild(thinking);
+
+  let startTime = Date.now();
+  const interval = setInterval(()=>{
+    const elapsed = Date.now()-startTime;
+    thinking.textContent = `eagle réfléchit : ${elapsed} ms`;
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  },50);
+
   try{
-    await new Promise(r=>setTimeout(r,500)); // simulation
-    clearInterval(interval); thinking.remove();
-    div.textContent="Réponse simulée de l'IA : Bonjour !";
-  }catch{
-    clearInterval(interval); thinking.remove(); div.className="msg-error"; div.textContent="Erreur : impossible de contacter l’IA.";
+    // ------------------------------
+    // REQUÊTE VERS TON BACKEND
+    // ------------------------------
+    const response = await fetch("http://localhost:3000/chat", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ message: userMsg })
+    });
+
+    const data = await response.json();
+    clearInterval(interval);
+    thinking.remove();
+    div.textContent = data.reply || "...";
+  } catch(err){
+    clearInterval(interval);
+    thinking.remove();
+    div.className="msg-error";
+    div.textContent="Erreur : impossible de contacter l’IA.";
   }
 }
 
@@ -95,3 +161,4 @@ createInputLine();
 </script>
 </body>
 </html>
+
