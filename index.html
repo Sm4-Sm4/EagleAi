@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eagleAI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Roboto Mono', monospace; background-color: #090909; }
+.cursor { color: #22ff88; font-weight: bold; }
+@keyframes blink { 0%,100% {opacity:1;} 50% {opacity:0;} }
+.blink { animation: blink 0.6s infinite; }
+.btn-custom { background-color: #23D200; }
+.btn-custom:hover { background-color: #1ec100; }
+.card { border: 2px solid #23D200; border-radius: 10px; box-shadow:0 0 25px #23D20044; background-color:#111111; word-break:break-word; max-width:100%; flex-shrink:0; transition: transform 0.3s, box-shadow 0.3s; }
+.card:hover { transform: scale(1.05); box-shadow: 0 0 35px #23D20088; }
+</style>
+</head>
+<body class="text-white">
+
+<header class="w-full px-8 pt-8 flex justify-center">
+<h1 class="text-3xl md:text-4xl font-extrabold text-center">
+L’IA ultime pour <span id="dynamic-word"></span>
+</h1>
+</header>
+
+<section class="flex flex-col md:flex-row items-start justify-center min-h-[calc(100vh-120px)] px-8 mt-8 gap-12">
+<div class="md:w-96 flex flex-col justify-start items-start space-y-6 mt-[110px]">
+<h2 class="text-xl md:text-2xl font-medium text-gray-400">
+Découvrez le vrai pouvoir d'une intelligence artificielle
+</h2>
+<a href="./terminal.html" class="btn-custom text-black font-bold uppercase px-8 py-4 rounded-lg transition-all duration-200">
+Accéder au terminal
+</a>
+</div>
+<div class="md:w-96 flex justify-center items-start">
+<img src="./eagle.png" alt="Aigle" class="w-96 md:w-[28rem] h-auto rounded-lg shadow-lg">
+</div>
+</section>
+
+<section class="px-8 pt-0 pb-12 bg-[#090909] -mt-20">
+<div class="max-w-6xl mx-auto text-center">
+<h2 class="text-3xl md:text-4xl font-extrabold text-white mb-12">Pourquoi Eagle est unique</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div class="card p-8"><h3 class="text-xl font-bold text-[#23D200] mb-4">Puissance inégalée</h3>
+    <p class="text-gray-400">Analyse instantanément des milliards de données.</p>
+  </div>
+  <div class="card p-8"><h3 class="text-xl font-bold text-[#23D200] mb-4">Confidentialité totale</h3>
+    <p class="text-gray-400">Données protégées par des protocoles avancés.</p>
+  </div>
+  <div class="card p-8"><h3 class="text-xl font-bold text-[#23D200] mb-4">Interface intuitive</h3>
+    <p class="text-gray-400">Une expérience fluide, sombre et rapide.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="px-8 py-24 bg-[#090909]">
+<div class="max-w-6xl mx-auto text-center">
+<h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
+Rejoignez une communauté d’utilisateurs <span class="text-[#23D200]">comblés</span>
+</h2>
+<p class="text-gray-400 max-w-3xl mx-auto mb-12">
+Découvrez les témoignages de nos utilisateurs et rejoignez la communauté Eagle.
+</p>
+
+<div class="overflow-hidden relative">
+<div id="review-track" class="flex gap-6">
+  <div class="card p-8 w-[350px]"><div class="text-[#23D200] text-xl mb-3">★★★★★</div>“J’pensais que c’était surcoté… ensuite j’ai testé.”<p class="font-bold text-[#23D200] mt-3">— NeoByte_77</p></div>
+  <div class="card p-8 w-[350px]"><div class="text-[#23D200] text-xl mb-3">★★★★★</div>“Eagle me carry mes journées.”<p class="font-bold text-[#23D200] mt-3">— Luna.exe</p></div>
+  <div class="card p-8 w-[350px]"><div class="text-[#23D200] text-xl mb-3">★★★★★</div>“C’est littéralement un cheat code IRL.”<p class="font-bold text-[#23D200] mt-3">— GhostLink</p></div>
+  <div class="card p-8 w-[350px]"><div class="text-[#23D200] text-xl mb-3">★★★★★</div>“Le bot répond plus vite que moi en contrôle.”<p class="font-bold text-[#23D200] mt-3">— PixelNova</p></div>
+</div>
+</div>
+
+<div class="mt-12">
+<a href="./terminal.html" class="btn-custom text-black font-bold uppercase px-8 py-4 rounded-lg transition-all duration-200">
+Accéder au terminal
+</a>
+</div>
+
+</div>
+</section>
+
+<footer class="bg-[#090909] text-gray-500 text-sm py-8 text-center">
+<p>© 2025 EAGLE — <a href="#" class="underline text-[#23D200]">Conditions d'utilisation</a> | <a href="#" class="underline text-[#23D200]">RGPD</a> | <a href="#" class="underline text-[#23D200]">Mentions légales</a></p>
+<p class="mt-2">Contact : <a href="mailto:dlgdd06@gmail.com" class="underline text-[#23D200]">dlgdd06@gmail.com</a> | <a href="tel:0745810757" class="underline text-[#23D200]">0745810757</a></p>
+</footer>
+
+<script src="./script.js" defer></script>
+</body>
+</html>

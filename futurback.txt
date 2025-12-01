@@ -1,0 +1,134 @@
+// server.js
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import fetch from 'node-fetch'; // si Node <18
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+// ===== CORS =====
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // à restreindre en prod
+  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
+// ===== Rate limiting =====
+const limiter = rateLimit({
+  windowMs: 1000,
+  max: 8,
+  message: { reply: 'Trop de requêtes — réessaye dans quelques secondes.' }
+});
+app.use('/chat', limiter);
+
+// ===== Supabase =====
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+
+// ===== Prompt système =====
+const SYSTEM_PROMPT = `
+Tu es Eagle AI.
+Tu réponds de façon claire, concise et professionnelle.
+Reste respectueux et sûr dans tes réponses.
+`;
+
+// ===== Helper LM Studio =====
+async function callLMStudio(userMessage) {
+  const lmUrl = 'http://localhost:1234/v1/chat/completions';
+  const payload = {
+    model: 'dphn/Dolphin3.0-Llama3.1-8B-GGUF',
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: userMessage }
+    ],
+    max_tokens: 1200
+  };
+
+  const resp = await fetch(lmUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => '');
+    throw new Error(`LM Studio error: ${resp.status} ${text}`);
+  }
+
+  const data = await resp.json();
+  const reply = data?.choices?.[0]?.message?.content ?? '';
+  return String(reply);
+}
+
+// ===== Auth Routes =====
+
+// Signup
+app.post('/signup', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Email et mot de passe requis' });
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) return res.status(400).json({ error: error.message });
+  res.json({ user: data.user });
+});
+
+// Login
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'Email et mot de passe requis' });
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return res.status(401).json({ error: error.message });
+
+  res.json({
+    user: data.user,
+    access_token: data.session?.access_token || null
+  });
+});
+
+// ===== Chat endpoint avec vérification de token =====
+app.post('/chat', async (req, res) => {
+  try {
+    const { message, access_token } = req.body;
+    if (!message) return res.status(400).json({ reply: 'Message vide' });
+    if (!access_token) return res.status(401).json({ reply: 'Utilisateur non authentifié' });
+
+    // Vérifier JWT Supabase
+    const { data: userData, error: userError } = await supabase.auth.getUser(access_token);
+    if (userError || !userData.user) return res.status(401).json({ reply: 'Token invalide' });
+
+    const userId = userData.user.id;
+
+    // Vérifier le solde de tokens
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('tokens')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !profile) return res.status(400).json({ reply: 'Profil utilisateur introuvable' });
+    if (profile.tokens <= 0) return res.status(403).json({ reply: 'Solde de tokens insuffisant' });
+
+    // Déduire un token
+    await supabase.from('profiles').update({ tokens: supabase.raw('tokens - 1') }).eq('id', userId);
+
+    // Appeler l’IA
+    const aiReply = await callLMStudio(message);
+    res.json({ reply: aiReply });
+
+  } catch (err) {
+    console.error('Erreur serveur /chat:', err);
+    res.status(500).json({ reply: 'Erreur serveur interne' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Eagle AI server running at http://localhost:${PORT}`);
+});

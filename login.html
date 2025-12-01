@@ -1,0 +1,32 @@
+<div class="flex items-center justify-center h-screen bg-black text-green-500 font-mono">
+  <form id="loginForm" class="bg-gray-900 p-8 rounded shadow-md w-96">
+    <h2 class="text-2xl mb-4 text-center">Connexion</h2>
+    <input type="email" placeholder="Email" id="email" class="w-full p-2 mb-4 bg-black border border-green-500 rounded text-green-500"/>
+    <input type="password" placeholder="Mot de passe" id="password" class="w-full p-2 mb-4 bg-black border border-green-500 rounded text-green-500"/>
+    <button type="submit" class="w-full p-2 bg-green-500 text-black font-bold rounded hover:bg-green-400">Se connecter</button>
+    <p id="error" class="text-red-500 mt-2"></p>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('loginForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const res = await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    if(res.ok){
+      localStorage.setItem('access_token', data.access_token);
+      window.location.href = '/terminal.html'; // redirection vers ton terminal IA
+    } else {
+      document.getElementById('error').innerText = data.error;
+    }
+  });
+</script>
