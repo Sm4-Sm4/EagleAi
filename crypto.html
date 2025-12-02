@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eagle AI - Paiement Crypto</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    margin: 0;
+    font-family: "Source Code Pro", monospace;
+    background-color: #000;
+    color: #00ff88;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px 60px 20px;
+  }
+
+  h1 {
+    color: #23D200;
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  p {
+    color: #aaa;
+    max-width: 800px;
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .wallets-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .wallet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #111;
+    border: 2px solid #23D200;
+    border-radius: 24px;
+    padding: 30px 20px;
+    min-width: 200px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .wallet:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px #23D20088;
+  }
+
+  .wallet h2 {
+    color: #23D200;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wallet h2 img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .wallet img.qr {
+    width: 180px;
+    height: 180px;
+    border: 2px solid #23D200;
+    border-radius: 16px;
+    margin-bottom: 15px;
+  }
+
+  .wallet p {
+    color: #fff;
+    font-size: 0.95rem;
+    text-align: center;
+    word-break: break-all;
+    background: #000000aa;
+    padding: 5px 10px;
+    border-radius: 8px;
+  }
+
+  @media (max-width: 650px) {
+    .wallets-container {
+      gap: 25px;
+    }
+    .wallet img.qr {
+      width: 140px;
+      height: 140px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Paiement en Crypto</h1>
+<p>Scannez le QR code correspondant ou copiez l’adresse pour acheter vos tokens. Toutes les transactions sont sécurisées et instantanées.</p>
+
+<div class="wallets-container">
+  <div class="wallet">
+    <h2><img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="Solana Logo"> SOLANA</h2>
+    <img id="solanaQR" class="qr" src="" alt="QR Solana">
+    <p>CjvpckFEWdqgASb3eyMeq2DChYAzBpcnYZZ64umWQ4X6</p>
+  </div>
+  <div class="wallet">
+    <h2><img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC Logo"> BTC</h2>
+    <img id="btcQR" class="qr" src="" alt="QR BTC">
+    <p>bc1qer4rmqf3k4l3at8aczx4ckzxuz6grx8g6y5rje</p>
+  </div>
+  <div class="wallet">
+    <h2><img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="ETH Logo"> ETH</h2>
+    <img id="ethQR" class="qr" src="" alt="QR ETH">
+    <p>0x224a6027D31Ffc271c731F157a3D16970BeD3e84</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+  const wallets = {
+    sol: "CjvpckFEWdqgASb3eyMeq2DChYAzBpcnYZZ64umWQ4X6",
+    btc: "bc1qer4rmqf3k4l3at8aczx4ckzxuz6grx8g6y5rje",
+    eth: "0x224a6027D31Ffc271c731F157a3D16970BeD3e84"
+  };
+
+  QRCode.toDataURL(wallets.sol).then(url => document.getElementById("solanaQR").src = url);
+  QRCode.toDataURL(wallets.btc).then(url => document.getElementById("btcQR").src = url);
+  QRCode.toDataURL(wallets.eth).then(url => document.getElementById("ethQR").src = url);
+</script>
+
+</body>
+</html>

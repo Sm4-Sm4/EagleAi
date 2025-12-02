@@ -1,32 +1,65 @@
-<div class="flex items-center justify-center h-screen bg-black text-green-500 font-mono">
-  <form id="loginForm" class="bg-gray-900 p-8 rounded shadow-md w-96">
-    <h2 class="text-2xl mb-4 text-center">Connexion</h2>
-    <input type="email" placeholder="Email" id="email" class="w-full p-2 mb-4 bg-black border border-green-500 rounded text-green-500"/>
-    <input type="password" placeholder="Mot de passe" id="password" class="w-full p-2 mb-4 bg-black border border-green-500 rounded text-green-500"/>
-    <button type="submit" class="w-full p-2 bg-green-500 text-black font-bold rounded hover:bg-green-400">Se connecter</button>
-    <p id="error" class="text-red-500 mt-2"></p>
-  </form>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion — Eagle Terminal</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Source Code Pro', monospace; background: #000; color: #00ff88; }
+  input, button { font-family: inherit; }
+  input:focus { outline: none; border-color: #1ed760; box-shadow: 0 0 5px #1ed760; }
+  button:hover { background-color: #111; border-color: #1ed760; }
+</style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+<div class="w-full max-w-sm bg-[#111] border border-[#23D200] rounded-xl p-8 relative shadow-lg">
+
+  <!-- Bandeau confiance -->
+
+  <h1 class="text-2xl font-bold text-[#23D200] text-center mb-6">Connexion </h1>
+
+  <label class="block text-sm mb-1">Email</label>
+  <input id="email" type="email" placeholder="vous@exemple.com" class="w-full mb-4 p-3 bg-black border border-[#23D200] rounded text-[#00ff88] placeholder-[#007f44]" />
+
+  <label class="block text-sm mb-1">Mot de passe</label>
+  <input id="password" type="password" placeholder="••••••••" class="w-full mb-6 p-3 bg-black border border-[#23D200] rounded text-[#00ff88] placeholder-[#007f44]" />
+
+  <button id="loginBtn" class="w-full py-3 bg-black border border-[#23D200] text-[#00ff88] font-bold rounded transition-all duration-200">
+    Se connecter
+  </button>
+
+  <p id="error" class="mt-3 text-sm text-red-500 text-center"></p>
+
+  <p class="mt-6 text-xs text-[#00ff88] text-center">
+    Pas encore de compte ? <a href="./terminal.html" class="underline">S'inscrire</a>
+  </p>
+
 </div>
 
 <script>
-  const form = document.getElementById('loginForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
 
-    const res = await fetch('http://localhost:3000/login', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ email, password })
-    });
+// login.js
 
-    const data = await res.json();
-    if(res.ok){
-      localStorage.setItem('access_token', data.access_token);
-      window.location.href = '/terminal.html'; // redirection vers ton terminal IA
-    } else {
-      document.getElementById('error').innerText = data.error;
-    }
-  });
+const loginBtn = document.getElementById("loginBtn");
+const errorMsg = document.getElementById("error");
+
+loginBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    errorMsg.textContent = "⚠ Veuillez remplir tous les champs.";
+    return;
+  }
+
+  // Redirection directe vers terminal.html
+  window.location.href = "terminal.html";
+});
 </script>
+</body>
+</html>
